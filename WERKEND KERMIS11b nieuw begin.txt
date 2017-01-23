@@ -1,0 +1,129 @@
+// nieuwe opzet van scratch af aan
+// het is er niet beter op geworden tov vorige exemplaren
+// Doelstelling 1 - omzet per attractie bepalen
+// Doelstelling 2 - omzet door de dag heen vasthouden cq optellen
+// Doelstelling 2 behaald- per attractie kan ik nu zien welke omzet er is gedraaid
+// Doelstelling 3 - totale omzet van alle attracties tonen
+// DOELSTELLING 3 NIET HELEMAAL GEHAALD. REVENUE VOOR ALLE ATTRACTIES LUKT WEL MAAR NIET OP AFROEP (TOETS 9)
+
+import java.util.Scanner;
+
+public class Kermisnw1 {
+
+	public static void main(String[] args) {
+		Kassa kermis = new Kassa();
+		System.out.println("hier ben ik");
+		kermis.kassadraaien();
+		System.out.println("hier ben ik nog n keer");  // hier kom ik uit als ik stop met de kermis = 0 = return
+	}
+}
+
+class Kassa {
+	// dit is array voor alle attracties, in dit geval  2 van 6
+	Attractie[] attracties = new Attractie[2]; // declaratie van de attracties
+
+	void kassadraaien() {  // begin void kassadraien
+		Scanner scannerKermis = new Scanner(System.in);
+
+		System.out.println("Als u naar de kermis wilt, toets 1. Wilt u de kermis verlaten, toets 0.");
+		int start = scannerKermis.nextInt();
+		while (start > 1) {
+			System.out.println("Sorry joh, keuze " + start + " is ongeldig. Maak je keuze opnieuw. 1 om te beginnen, 0 om te stoppen.");
+			start = scannerKermis.nextInt();
+		}
+
+		if (start == 1) {           // 1 IS STARTEN, 0 IS BEEINDIGEN 
+			System.out.println("OK, we gaan starten.");	
+			System.out.println("");
+		} else { //new Eindespel();	// 1 IS STARTEN, 0 IS BEEINDIGEN new Eindespel werkt (nog) niet
+			System.out.println("No worries. Dank voor je bezoek. Tot de volgende keer.");
+			System.out.println("");
+			kassadraaien();
+		}
+
+		attracties[0] = new Botsauto();		// het vullen van array veld met adres
+		attracties[1] = new Spin();
+
+		/////////////////////// KEUZE MAKEN VOOR DE TE SPELEN ATTRACTIE
+		int keuzeAtt = -1;
+		double revenue = 0;
+		while (keuzeAtt != 0){		// begin herhaal blok
+			System.out.println("We hebben de volgende attracties: ");
+//			System.out.println("Lengte array = "+ attracties.length);
+			for (int i = 0; i < attracties.length; i++) {
+				System.out.print("Nr. " + (i+1) + ": Attractienaam: " + attracties[i].naam);
+				System.out.println("     Entreeprijs: € " +  attracties[i].entree + " p.p.");
+			}
+			System.out.println("Welke attractie wilt u bezoeken? Maak uw keuze gevolgd door <Enter>.");
+			System.out.println("Wilt u de totale omzet bekijken, toets dan een 9.");
+			keuzeAtt = scannerKermis.nextInt();
+
+			switch (keuzeAtt) {
+			case 0 : 	System.out.println("No worries. Tot ziens.");
+						kassadraaien();
+			break;
+			case 1 : 	System.out.println("We gaan naar "+ attracties[keuzeAtt-1].naam);
+			break;
+			case 2 : 	System.out.println("We gaan naar "+ attracties[keuzeAtt-1].naam);
+			break;
+			case 9 : 	System.out.println("De totale revenue van alle attracties tot nu toe = "+ revenue);
+						System.out.println("");
+						kassadraaien();    ///  is niet handig want teller gaat weer op nul
+			break;
+			}
+			System.out.println("Met hoeveel personen wilt u naar "+ attracties[keuzeAtt-1].naam);
+			int aantalKaartjes = scannerKermis.nextInt();
+			revenue += ((aantalKaartjes * attracties[keuzeAtt-1].entree));
+			System.out.println("Totale revenue alle attracties = "+ revenue);   // werkt goed
+			System.out.println("");
+			attracties[keuzeAtt-1].afrekenenKaartjes(aantalKaartjes,attracties[keuzeAtt-1].naam);
+		}		// einde herhaalblok
+	}		// einde void kassadraaien()
+}			// einde class kermis
+
+class Attractie {
+	double huidigeOmzet;
+	double entree;
+	String naam;
+	int totaalKaartjes;
+	double totaalOmzet;
+
+	void afrekenenKaartjes(int aantalKaartjes, String naamAttr) {
+		huidigeOmzet = aantalKaartjes * entree;
+		totaalOmzet += huidigeOmzet;
+		totaalKaartjes += aantalKaartjes;
+		System.out.println("Attractienaam: "+ naamAttr);
+		System.out.println("Het aantal verkochte kaartjes voor " +  naamAttr + " voor deze rit = " + aantalKaartjes);	
+		System.out.println("De omzet voor " +  naamAttr + " voor deze rit = " + huidigeOmzet);	
+		System.out.println("Het totale aantal verkochte kaartjes voor " +  naamAttr + " = " + totaalKaartjes);	
+		System.out.println("De totale omzet voor " +  naamAttr + " = " + totaalOmzet);	
+		System.out.println("");	
+		System.out.println("De attractie is voorbij. We gaan opnieuw naar de kassa");	
+		System.out.println("");	
+	}
+}
+
+class Botsauto extends Attractie {
+	Botsauto() { 					// constructor om de waarde van de entree prijs te vullen
+		entree = 2.50;
+		naam = "Botsauto";
+	}
+}
+
+class Spin extends Attractie {
+	Spin() { 						// constructor om de waarde van de entree prijs te vullen
+		entree = 2.25;
+		naam = "Spin";
+	}
+}
+
+
+
+//		deze zal ik pas inzetten als ik aan wil geven spel te beeindigen bijv. toets 0.
+//		class Eindespel extends Kassa {
+//			Eindespel() { 			// constructor eindespel te forceren
+//				System.out.println("No worries. Dank voor je bezoek. Tot de volgende keer.");
+//				System.out.println("");
+//			}
+//		}
+
